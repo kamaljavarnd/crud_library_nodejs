@@ -15,5 +15,8 @@ module.exports = app => {
   router.get("/:id", books.findOne);
 
 
+ // Update a Book with id
+  router.put("/:id", books.update);
+
   app.use("/api/books", router);
 };

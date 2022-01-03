@@ -13,7 +13,8 @@ exports.create = (req, res) => {
   const book = new Book({
     title: req.body.title,
     description: req.body.description,
-    published: req.body.published ? req.body.published : false
+    author: req.body.author,
+    available: req.body.available ? req.body.available : false
   });
 
   // Save Book in the database
@@ -25,7 +26,7 @@ exports.create = (req, res) => {
     .catch(err => {
       res.status(500).send({
         message:
-          err.message || "Some error occurred while creating the Tutorial."
+          err.message || "Some error occurred while creating the Book."
       });
     });
 };
@@ -62,5 +63,31 @@ exports.findOne = (req, res) => {
       res
         .status(500)
         .send({ message: "Error retrieving Book with id=" + id });
+    });
+};
+
+
+// Update a Book by the id in the request
+exports.update = (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({
+      message: "Data to update can not be empty!"
+    });
+  }
+
+  const id = req.params.id;
+
+  Book.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot update Book with id=${id}. Maybe Book was not found!`
+        });
+      } else res.send({ message: "Book was updated successfully." });
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error updating Book with id=" + id
+      });
     });
 };
