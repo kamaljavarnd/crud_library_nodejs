@@ -91,3 +91,27 @@ exports.update = (req, res) => {
       });
     });
 };
+
+
+// Delete a Book with the specified id in the request
+exports.delete = (req, res) => {
+  const id = req.params.id;
+
+  Book.findByIdAndRemove(id, { useFindAndModify: false })
+    .then(data => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot delete Book with id=${id}. Maybe Book was not found!`
+        });
+      } else {
+        res.send({
+          message: "Book was deleted successfully!"
+        });
+      }
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Could not delete Book with id=" + id
+      });
+    });
+};
