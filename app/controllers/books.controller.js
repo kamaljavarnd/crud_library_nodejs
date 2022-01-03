@@ -30,3 +30,37 @@ exports.create = (req, res) => {
     });
 };
 
+// Retrieve all Books from the database.
+exports.findAll = (req, res) => {
+  const title = req.query.title;
+  var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
+
+  Book.find(condition)
+    .then(data => {
+      res.send(data);
+    })
+    .catch(err => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving books."
+      });
+    });
+};
+
+
+// Find a single Book with an id
+exports.findOne = (req, res) => {
+  const id = req.params.id;
+
+  Book.findById(id)
+    .then(data => {
+      if (!data)
+        res.status(404).send({ message: "Not found Book with id " + id });
+      else res.send(data);
+    })
+    .catch(err => {
+      res
+        .status(500)
+        .send({ message: "Error retrieving Book with id=" + id });
+    });
+};
